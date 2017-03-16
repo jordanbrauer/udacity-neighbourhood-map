@@ -1,0 +1,19 @@
+{
+  "name": "udacity-neighbourhood-map",
+  "version": "0.0.1",
+  "description": "A neighbourhood map project aimed to showcase some of my favourite places in my city. Project uses Google Maps API and many others.",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jordanbrauer/udacity-neighbourhood-map.git"
+  },
+  "author": "Jordan Brauer <jbrauer.inc@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jordanbrauer/udacity-neighbourhood-map/issues"
+  },
+  "homepage": "https://github.com/jordanbrauer/udacity-neighbourhood-map#readme"
+}
