@@ -1,3 +1,0 @@
-const ApplicationViewModel = () => {
-  // Application ViewModel code...
-};
