@@ -1,27 +1,28 @@
+// LocationsModel
 const LocationsModel = [
   {
     name: 'Game Knight',
-    latitude: '12345.67890',
-    longitude: '-12345.67890',
-    lat: this.latitude,
-    lng: this.longitude,
-  },{
+    lat: 49.8615357,
+    lng: -97.13135559999999,
+  },
+  {
     name: 'Fusion Gaming',
-    latitude: '12345.67890',
-    longitude: '-12345.67890',
-    lat: this.latitude,
-    lng: this.longitude,
-  },{
-    name: 'Amusein Games',
-    latitude: '12345.67890',
-    longitude: '-12345.67890',
-    lat: this.latitude,
-    lng: this.longitude,
-  },{
-    name: 'Galaxy Games'
-    latitude: '12345.67890',
-    longitude: '-12345.67890',
-    lat: this.latitude,
-    lng: this.longitude,
+    lat: 49.83590299999999,
+    lng: -97.15094099999999,
+  },
+  {
+    name: 'Galaxy Games',
+    lat: 49.87904400000001,
+    lng: -97.211935,
+  },
+  {
+    name: 'Tripple B\'s',
+    lat: 49.9544339,
+    lng: -97.07461859999999,
+  },
+  {
+    name: 'Across the Board Game Café',
+    lat: 49.898143,
+    lng: -97.139662,
   }
 ];
