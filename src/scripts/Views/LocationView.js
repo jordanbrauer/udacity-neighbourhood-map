@@ -1,3 +1,0 @@
-const LocationView = (data) => {
-  // Location constructor code...
-};
