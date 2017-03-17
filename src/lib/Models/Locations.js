@@ -1,5 +1,6 @@
-// LocationsModel
-const LocationsModel = [
+'use strict';
+
+const Locations = [
   {
     name: 'Game Knight',
     lat: 49.8615357,
