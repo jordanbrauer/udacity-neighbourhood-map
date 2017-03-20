@@ -42,12 +42,10 @@ describe('Map ViewModel Tests', function() {
   });
 
   describe('Map Prototype Method Tests', function() {
-    // it('it should have a method of `init()`', function() {
-    //   expect(googleMaps).to.respondTo('init');
-    // });
     it('it should respond to a method call of `setLocationMarkers()`', function() {
       expect(googleMaps).to.respondTo('setLocationMarkers');
     });
+    
     it('it should have a method of `onError()`');
   });
 });
