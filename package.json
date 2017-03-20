@@ -6,7 +6,7 @@
   "scripts": {
     "test:macos": "open ./dev/test/index.html",
     "test": "xdg-open ./dev/test/index.html",
-    "docs": "jsdoc ./src -r -d ./dev/docs"
+    "docs": "rm -rf ./dev/docs && jsdoc ./src -r -d ./dev/docs"
   },
   "repository": {
     "type": "git",
