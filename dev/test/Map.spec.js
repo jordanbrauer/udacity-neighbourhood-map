@@ -30,18 +30,24 @@ describe('Map ViewModel Tests', function() {
 
   });
 
-  describe('Map Option Tests', function() {
+  describe('Map Required Options Tests', function() {
     it('it should have the property `options` define `center` as an instance of `google.maps.LatLng`', function() {
       expect(googleMaps).to.have.deep.property('options.center').that.is.an.instanceof(google.maps.LatLng);
       expect(googleMaps).to.have.deep.property('options.center').that.is.an('object');
     });
 
-    it('it should have the property `options` define `scrollwheel` as a {boolean}', function() {
-      expect(googleMaps).to.have.deep.property('options.scrollwheel').that.is.a('boolean');
-    });
-
     it('it should have the property `options` define `zoom` as an {integer}', function() {
       expect(googleMaps).to.have.deep.property('options.zoom').that.is.a('number');
     });
+  });
+
+  describe('Map Prototype Method Tests', function() {
+    // it('it should have a method of `init()`', function() {
+    //   expect(googleMaps).to.respondTo('init');
+    // });
+    it('it should respond to a method call of `setLocationMarkers()`', function() {
+      expect(googleMaps).to.respondTo('setLocationMarkers');
+    });
+    it('it should have a method of `onError()`');
   });
 });
