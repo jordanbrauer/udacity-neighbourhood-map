@@ -45,7 +45,7 @@ describe('Map ViewModel Tests', function() {
     it('it should respond to a method call of `setLocationMarkers()`', function() {
       expect(googleMaps).to.respondTo('setLocationMarkers');
     });
-    
+
     it('it should have a method of `onError()`');
   });
 });
