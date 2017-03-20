@@ -1,7 +1,15 @@
 'use strict';
 
-const Map = function() {
+const Map = function(locations, options) {
   const self = this;
+
+  this.options = options || {
+    center: new google.maps.LatLng(56.1304, -106.3468),
+    scrollwheel: false,
+    zoom: 4,
+  };
+
+  this.locations = locations || [];
 
   this.markers = [];
 
@@ -9,14 +17,10 @@ const Map = function() {
   // in addition to specifying a center location
   // and any other options we may want. See Google Maps API docs for
   // more values
-  const map = new google.maps.Map(document.getElementById('map'), {
-    center: new google.maps.LatLng(49.895136, -97.1383743999999),
-    scrollwheel: false,
-    zoom: 11
-  });
+  this.map = new google.maps.Map(document.getElementById('map'), self.options);
 
   // Create new markers and push them into our markers array attribute.
-  Locations.forEach(function(location){
-    self.markers.push(new LocationMarker(map, location));
+  this.locations.forEach(function(location) {
+    self.markers.push(new LocationMarker(self.map, location));
   });
 };

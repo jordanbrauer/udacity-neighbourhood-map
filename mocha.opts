@@ -1,3 +1,0 @@
-./dev/tests
---recursive
---require ./dev/tests/suite.js
