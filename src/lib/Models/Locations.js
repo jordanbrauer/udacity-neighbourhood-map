@@ -1,5 +1,10 @@
 'use strict';
 
+/**
+ * @file Locations.js
+ * @author Jordan Brauer <jbrauer.inc@gmail.com>
+ */
+
 const Locations = [
   {
     name: 'Game Knight',
