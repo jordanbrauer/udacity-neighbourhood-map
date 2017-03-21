@@ -1,7 +1,5 @@
 'use strict';
 
-const expect = chai.expect;
-
 describe('Map ViewModel Tests', function() {
   describe('Map Constructor Tests', function() {
     it('it is an instance of `Map` and is of type {object}', function() {
@@ -9,12 +7,12 @@ describe('Map ViewModel Tests', function() {
       expect(googleMaps).to.be.an('object');
     });
 
-    it('it should have a property of `locations` that is NOT empty and is of type {object} passed to it on creation', function() {
+    it('it should have a property of `locations` that is not empty and is of type {object} passed to it on creation', function() {
       expect(googleMaps).to.have.property('locations').that.is.an('array');
       expect(googleMaps.locations).to.have.length.of.at.least(1);
     });
 
-    it('it should have a property of `options` that is NOT empty and is of type {object} passed to it on creation', function() {
+    it('it should have a property of `options` that is not empty and is of type {object} passed to it on creation', function() {
       expect(googleMaps).to.have.property('options').that.is.an('object');
     });
 
@@ -23,7 +21,7 @@ describe('Map ViewModel Tests', function() {
       expect(googleMaps.map).to.be.an.instanceof(google.maps.Map);
     });
 
-    it('it should have a property of `markers` that is NOT empty and is of type {array}', function() {
+    it('it should have a property of `markers` that is not empty and is of type {array}', function() {
       expect(googleMaps).to.have.property('markers').that.is.an('array');
       expect(googleMaps.markers).to.have.length.of.at.least(1);
     });
@@ -46,6 +44,8 @@ describe('Map ViewModel Tests', function() {
       expect(googleMaps).to.respondTo('setLocationMarkers');
     });
 
-    it('it should have a method of `onError()`');
+    it('it should have a method of `onError()`', function() {
+      expect(googleMaps).to.respondTo('onError');
+    });
   });
 });
