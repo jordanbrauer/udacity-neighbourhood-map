@@ -6,18 +6,21 @@
  */
 
 /**
- * Creates a new Map.
+ * Creates a new Map to display to the user.
  * @constructor Map
+ * @version 1.0.0
  * @author Jordan Brauer <jbrauer.inc@gmail.com>
  * @param {array} locations - The dataset that is being used to plot markers on the map.
  * @param {object} options - A list of key value pairs defining initial settings for map.
  * @param {object} options.center - A pair of latitude and longitude coordinates.
  * @param {integer} options.zoom - The initial starting zoom level of the map.
  */
-const Map = function(locations, options) {
+const Map = function (locations, options) {
   /** @private */
   const self = this;
-  const init = function() {
+
+  /** @private */
+  const init = function () {
     self.setLocationMarkers(self.locations);
   };
 
@@ -61,7 +64,7 @@ const Map = function(locations, options) {
 Map.prototype.setLocationMarkers = function (locations) {
   const self = this;
 
-  locations.forEach(function(location) {
+  locations.forEach(function (location) {
     self.markers.push(new LocationMarker(self.map, location));
   });
 };
