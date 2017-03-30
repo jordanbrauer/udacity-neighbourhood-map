@@ -1,5 +1,10 @@
 'use strict';
 
+(function (){
+  $(document).foundation();
+  $('#map').height($(window).height());
+})();
+
 let googleMaps;
 
 function initMap() {
@@ -9,5 +14,7 @@ function initMap() {
     scrollwheel: false,
   }
 
-  return googleMaps = new Map(Locations, options);
+  googleMaps = new Map(Locations, options);
+
+  return ko.applyBindings(googleMaps);
 }
