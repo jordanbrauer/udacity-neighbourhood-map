@@ -1,8 +1,11 @@
 'use strict';
 
+// Map ViewModel Tests
 describe('Map ViewModel Tests', function() {
+  // Map Constructor Tests
   describe('Map Constructor Tests', function() {
     it('it is an instance of `Map` and is of type {object}', function() {
+      console.log();
       expect(googleMaps).to.be.an.instanceof(Map);
       expect(googleMaps).to.be.an('object');
     });
@@ -28,6 +31,7 @@ describe('Map ViewModel Tests', function() {
 
   });
 
+  // Map Options Tests
   describe('Map Required Options Tests', function() {
     it('it should have the property `options` define `center` as an instance of `google.maps.LatLng`', function() {
       expect(googleMaps).to.have.deep.property('options.center').that.is.an.instanceof(google.maps.LatLng);
@@ -39,13 +43,16 @@ describe('Map ViewModel Tests', function() {
     });
   });
 
+  // Map Prototype Method Tests
   describe('Map Prototype Method Tests', function() {
     it('it should respond to a method call of `setLocationMarkers()`', function() {
       expect(googleMaps).to.respondTo('setLocationMarkers');
     });
 
-    it('it should have a method of `onError()`', function() {
+    it('it should respond to a method call of `onError()`', function() {
       expect(googleMaps).to.respondTo('onError');
     });
+
+    it('it should respond to a method call of `filterMarkers()`');
   });
 });
