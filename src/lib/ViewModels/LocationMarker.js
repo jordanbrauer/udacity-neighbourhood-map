@@ -19,9 +19,7 @@ const LocationMarker = function (map, data) {
 
   /** @private */
   const init = function () {
-    const request = $.get(`${self.api.base_uri}/${self.api.end_point}`);
-
-    request.done(function (res) {
+    const request = $.get(`${self.api.base_uri}/${self.api.end_point}`).done(function (res) {
       self.api.status = res.meta.code;
 
       const venue = res.response.venues[0];
@@ -37,14 +35,15 @@ const LocationMarker = function (map, data) {
       <p>${self.details.lat}, ${self.details.lng}</p>
       <p>${self.details.phoneNumber}</p>
       `;
-    });
-
-    request.fail(function (err) {
-      self.api.status = err.status;
-
-      console.error(`ERROR ${err.status} (${err.statusText}): ${err.responseJSON.meta.errorDetail}`);
-
-      self.content = '<span style="color: red;">Oops, it appears something has gone wrong!</span>';
+    }).fail(function (err) {
+      try {
+        self.api.status = err.status;
+        console.error(`ERROR ${err.status} (${err.statusText}): ${err.responseJSON.meta.errorDetail}`);
+      } catch (err) {
+        console.error('There has been an error in requesting the API. Please review this log for more details.');
+      } finally {
+        self.content = '<span style="color: red;">Oops, it appears something has gone wrong!</span>';
+      }
     });
 
     self.marker.addListener('click', function (){
