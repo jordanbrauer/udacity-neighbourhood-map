@@ -17,6 +17,10 @@ describe('LocationMarker ViewModel Tests', function () {
       }
     });
 
+    it('it should have a property of `details` that is not null and is of type {object}', function () {
+      expect(googleMaps.markers()[0]).to.have.property('details').that.is.an('object');
+    });
+
     it('it should have a property of `name` that is not null and is of type {string}.');
 
     it('it should have a property of `lat` that is not null and is of type {integer}.');
