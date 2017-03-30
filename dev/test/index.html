@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Test Suite | Udacity Neighbourhood Map</title>
     <link href="./suite/mocha.css" rel="stylesheet" type="text/css">
+    <script src="../../src/vendor/jquery.min.js" type="text/javascript"></script>
+    <script src="../../src/vendor/foundation.min.js" type="text/javascript"></script>
   </head>
   <body>
     <!-- Test Suite Setup -->
@@ -19,8 +21,9 @@
     </script>
 
     <!-- Test subjects -->
-    <div id="map"></div>
+    <div id="map" style="display:none !important;"></div>
 
+    <script src="../../src/vendor/knockout-latest.js" type="text/javascript"></script>
     <script src="../../src/app.js" type="text/javascript"></script>
     <script src="../../src/lib/Models/Locations.js" type="text/javascript"></script>
     <script src="../../src/lib/ViewModels/LocationMarker.js" type="text/javascript"></script>
@@ -32,6 +35,8 @@
     <script src="./LocationMarker.spec.js" type="text/javascript"></script>
 
     <!-- Run mocha test suite -->
-    <script type="text/javascript">mocha.run();</script>
+    <script type="text/javascript">
+      mocha.run();
+    </script>
   </body>
 </html>
