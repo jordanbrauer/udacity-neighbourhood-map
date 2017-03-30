@@ -46,6 +46,17 @@ const LocationMarker = function (map, data) {
 
       self.content = '<span style="color: red;">Oops, it appears something has gone wrong!</span>';
     });
+
+    self.marker.addListener('click', function (){
+      if (!self.infoWindow.content) {
+        self.infoWindow.setContent(self.content);
+      }
+
+      self.animate('bounce', 2150);
+
+      self.infoWindow.open(this.map, this);
+    });
+
     console.log(self);
   };
 
@@ -60,6 +71,12 @@ const LocationMarker = function (map, data) {
    * @property {object} map - The Map object that this LocationMarker belongs to.
    */
   this.map = map;
+
+  /**
+   * @memberof LocationMarker
+   * @property {string} content - Content to be placed in the `infoWindow`s.
+   */
+  this.content;
 
   /**
    * @memberof LocationMarker
@@ -103,12 +120,6 @@ const LocationMarker = function (map, data) {
   };
 
   /**
-   * @memberof LocationMarker
-   * @property {string} content - Content to be placed in the `infoWindow`s.
-   */
-  this.content;
-
-  /**
   * @memberof LocationMarker
   * @property {object} infoWindow - The info window UI element that pops up when a marker or list item is clicked.
   */
@@ -122,17 +133,6 @@ const LocationMarker = function (map, data) {
     map: self.map,
     position: new google.maps.LatLng(self.details.lat, self.details.lng),
     title: self.details.name,
-  });
-
-  // Click event listener
-  this.marker.addListener('click', function (){
-    if (!self.infoWindow.content) {
-      self.infoWindow.setContent(self.content);
-    }
-
-    self.animate('bounce', 2150);
-
-    self.infoWindow.open(this.map, this);
   });
 
   // Call object constructor
