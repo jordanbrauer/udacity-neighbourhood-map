@@ -143,8 +143,12 @@ const LocationMarker = function (map, data) {
 /**
  * @memberof LocationMarker
  * @method animate
+ * @description A small and simple wrapper for the `google.maps.Animation` API that allows the user to specify an animation and duration.
  * @param {string} animation - The type of animation to be executed on the marker - see a list Google Maps marker animations for more options.
  * @param {integer} duration - (optional) Duration of the animation in miliseconds.
+ * @example
+ * myMarker.animate('drop');
+ * myMarker.animate('bounce', 3000);
  */
 LocationMarker.prototype.animate = function (animation, duration = null) {
   const self = this;
