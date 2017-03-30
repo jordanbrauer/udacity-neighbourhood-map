@@ -22,13 +22,14 @@ const Map = function (locations, options) {
   /** @private */
   const init = function () {
     self.setLocationMarkers(self.locations);
+    console.log(self);
   };
 
   /**
    * @memberof Map
    * @property {array} locations - Store our location data in a new array property.
    */
-  this.locations = locations || [];
+  this.locations = ko.observableArray(locations) || ko.observableArray([]);
 
   /**
    * @memberof Map
@@ -50,7 +51,7 @@ const Map = function (locations, options) {
    * @memberof Map
    * @property {array} markers - Store our markers in an array property.
    */
-  this.markers = [];
+  this.markers = ko.observableArray([]);
 
   // Call the object constructor
   init();
@@ -64,7 +65,7 @@ const Map = function (locations, options) {
 Map.prototype.setLocationMarkers = function (locations) {
   const self = this;
 
-  locations.forEach(function (location) {
+  locations().forEach(function (location) {
     self.markers.push(new LocationMarker(self.map, location));
   });
 };
