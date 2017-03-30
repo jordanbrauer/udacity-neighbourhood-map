@@ -26,16 +26,16 @@ const LocationMarker = function (map, data) {
 
       const venue = res.response.venues[0];
 
-      self.url = venue.url;
-      self.street = venue.location.formattedAddress[0];
-      self.city = venue.location.formattedAddress[1];
-      self.phoneNumber = venue.contact.formattedPhone;
+      self.details.url = venue.url;
+      self.details.street = venue.location.formattedAddress[0];
+      self.details.city = venue.location.formattedAddress[1];
+      self.details.phoneNumber = venue.contact.formattedPhone;
 
       self.content =`
-      <h4><a href="${self.url}" target="_blank">${self.name}</a></h4>
-      <p>${self.street}, ${self.city}</p>
-      <p>${self.lat}, ${self.lng}</p>
-      <p>${self.phoneNumber}</p>
+      <h4><a href="${self.details.url}" target="_blank">${self.details.name}</a></h4>
+      <p>${self.details.street}, ${self.details.city}</p>
+      <p>${self.details.lat}, ${self.details.lng}</p>
+      <p>${self.details.phoneNumber}</p>
       `;
     });
 
@@ -63,45 +63,44 @@ const LocationMarker = function (map, data) {
 
   /**
    * @memberof LocationMarker
-   * @property {string} name - Name of the location that is being plotted on the map.
+   * @property {object} details - Set of details that describe the venue.
+   * @property {string} details.name - Name of the location that is being plotted on the map.
+   * @property {integer} details.lat - The latitude of the location to be plotted.
+   * @property {integer} details.lng - The longitude of the location to be plotted.
+   * @property {string} details.street - Street of the venue.
+   * @property {string} details.city - City that the venue lives in.
+   * @property {string} details.url - URL to the venues' website.
+   * @property {string} details.phone - Phone # to call the venue.
+   * @property {string} details.facebook - Facebook link to venue.
+   * @property {string} details.twitter - Twitter link to venue.
+   * @property {string} details.instagram - Instagram link to venue.
    */
-  this.name = data.name;
+  this.details = {
+    name: data.name,
+    lat: data.lat,
+    lng: data.lng,
+    street: null,
+    city: null,
+    url: null,
+    phone: null,
+    facebook: null,
+    twitter: null,
+    instagram: null,
+  };
 
   /**
    * @memberof LocationMarker
-   * @property {integer} lat - The latitude of the location to be plotted.
+   * @property {object} api - Set of details related to the GET request and response to the 3rd part API.
+   * @property {string} api.base_uri - base URL to make request(s) off of.
+   * @property {string} api.end_point - destination to retrieve data from based off of parameters provided.
+   * @property {integer} api.status - Status code of GET request.
    */
-  this.lat = data.lat;
-
-  /**
-   * @memberof LocationMarker
-   * @see lat
-   */
-  this.latitude = this.lat;
-
-  /**
-   * @memberof LocationMarker
-   * @property {integer} lng - The longitude of the location to be plotted.
-   */
-  this.lng = data.lng;
-
-   /**
-   * @memberof LocationMarker
-   * @see lng
-   */
-  this.longitude = this.lng;
-
   this.api = {
     base_uri: 'https://api.foursquare.com/v2',
-    end_point: `venues/search?ll=${self.lat},${self.lng}&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&v=20170329`,
+    end_point: `venues/search?ll=${self.details.lat},${self.details.lng}&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&v=20170329`,
     status: null,
     // request: null,
   };
-
-  this.url;
-  this.street;
-  this.city;
-  this.phoneNumber;
 
   /**
    * @memberof LocationMarker
@@ -121,8 +120,8 @@ const LocationMarker = function (map, data) {
    */
   this.marker = new google.maps.Marker({
     map: self.map,
-    position: new google.maps.LatLng(self.lat, self.lng),
-    title: self.name,
+    position: new google.maps.LatLng(self.details.lat, self.details.lng),
+    title: self.details.name,
   });
 
   // Click event listener
