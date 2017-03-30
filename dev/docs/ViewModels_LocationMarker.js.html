@@ -46,7 +46,52 @@ const LocationMarker = function (map, data) {
   const self = this;
 
   /** @private */
-  const init = function () {};
+  const init = function () {
+    const request = $.get(`${self.api.base_uri}/${self.api.end_point}`).done(function (res) {
+      self.api.status = res.meta.code;
+
+      const venue = res.response.venues[0];
+
+      self.details.url = venue.url;
+      self.details.street = venue.location.formattedAddress[0];
+      self.details.city = venue.location.formattedAddress[1];
+      self.details.phoneNumber = venue.contact.formattedPhone;
+
+      self.content =`
+      &lt;h4>&lt;a href="${self.details.url}" target="_blank">${self.details.name}&lt;/a>&lt;/h4>
+      &lt;p>${self.details.street}, ${self.details.city}&lt;/p>
+      &lt;p>${self.details.lat}, ${self.details.lng}&lt;/p>
+      &lt;p>${self.details.phoneNumber}&lt;/p>
+      `;
+    }).fail(function (err) {
+      try {
+        self.api.status = err.status;
+        console.error(`ERROR ${err.status} (${err.statusText}): ${err.responseJSON.meta.errorDetail}`);
+      } catch (err) {
+        console.error('There has been an error in requesting the API. Please review this log for more details.');
+      } finally {
+        self.content = '&lt;span style="color: red;">Oops, it appears something has gone wrong!&lt;/span>';
+      }
+    });
+
+    self.marker.addListener('click', function (){
+      if (!self.infoWindow.content) {
+        self.infoWindow.setContent(self.content);
+      }
+
+      self.animate('bounce', 2150);
+
+      self.infoWindow.open(this.map, this);
+    });
+
+    console.log(self);
+  };
+
+  /** @private */
+  const CLIENT_ID = 'E45RTSS15B1T3HKN1R1Y03TLIV3CHBPFCAY52CC1CFAWT3H5';
+
+  /** @private */
+  const CLIENT_SECRET = 'BKMWVMAPHQ5LLDGWDVWKEAJ35USFQPFLI0NKBJ4BBPECHOHZ';
 
   /**
    * @memberof LocationMarker
@@ -56,33 +101,56 @@ const LocationMarker = function (map, data) {
 
   /**
    * @memberof LocationMarker
-   * @property {string} name - Name of the location that is being plotted on the map.
+   * @property {string} content - Content to be placed in the `infoWindow`s.
    */
-  this.name = data.name;
+  this.content;
 
   /**
    * @memberof LocationMarker
-   * @property {integer} lat - The latitude of the location to be plotted.
+   * @property {object} details - Set of details that describe the venue.
+   * @property {string} details.name - Name of the location that is being plotted on the map.
+   * @property {integer} details.lat - The latitude of the location to be plotted.
+   * @property {integer} details.lng - The longitude of the location to be plotted.
+   * @property {string} details.street - Street of the venue.
+   * @property {string} details.city - City that the venue lives in.
+   * @property {string} details.url - URL to the venues' website.
+   * @property {string} details.phone - Phone # to call the venue.
+   * @property {string} details.facebook - Facebook link to venue.
+   * @property {string} details.twitter - Twitter link to venue.
+   * @property {string} details.instagram - Instagram link to venue.
    */
-  this.lat = data.lat;
+  this.details = {
+    name: data.name,
+    lat: data.lat,
+    lng: data.lng,
+    street: null,
+    city: null,
+    url: null,
+    phone: null,
+    facebook: null,
+    twitter: null,
+    instagram: null,
+  };
 
   /**
    * @memberof LocationMarker
-   * @see lat
+   * @property {object} api - Set of details related to the GET request and response to the 3rd part API.
+   * @property {string} api.base_uri - base URL to make request(s) off of.
+   * @property {string} api.end_point - destination to retrieve data from based off of parameters provided.
+   * @property {integer} api.status - Status code of GET request.
    */
-  this.latitude = this.lat;
+  this.api = {
+    base_uri: 'https://api.foursquare.com/v2',
+    end_point: `venues/search?ll=${self.details.lat},${self.details.lng}&amp;client_id=${CLIENT_ID}&amp;client_secret=${CLIENT_SECRET}&amp;v=20170329`,
+    status: null,
+    // request: null,
+  };
 
   /**
-   * @memberof LocationMarker
-   * @property {integer} lng - The longitude of the location to be plotted.
-   */
-  this.lng = data.lng;
-
-   /**
-   * @memberof LocationMarker
-   * @see lng
-   */
-  this.longitude = this.lng;
+  * @memberof LocationMarker
+  * @property {object} infoWindow - The info window UI element that pops up when a marker or list item is clicked.
+  */
+  this.infoWindow = new google.maps.InfoWindow();
 
   /**
    * @memberof LocationMarker
@@ -90,32 +158,44 @@ const LocationMarker = function (map, data) {
    */
   this.marker = new google.maps.Marker({
     map: self.map,
-    position: new google.maps.LatLng(self.lat, self.lng),
-    title: self.name
+    position: new google.maps.LatLng(self.details.lat, self.details.lng),
+    title: self.details.name,
   });
 
-  /**
-   * @memberof LocationMarker
-   * @property {string} content - Content to be placed in the `infoWindow`s.
-   */
-  this.content =`
-  &lt;h3>${this.name}&lt;/h3>
-  &lt;p>${this.lat}, ${this.lng}&lt;/p>
-  `;
+  // Call object constructor
+  init();
+};
 
-  /**
-   * @memberof LocationMarker
-   * @property {object} infoWindow - The info window UI element that pops up when a marker or list item is clicked.
-   */
-  this.infoWindow = new google.maps.InfoWindow({
-    content: self.content
-  });
+/**
+ * @memberof LocationMarker
+ * @method animate
+ * @description A small and simple wrapper for the `google.maps.Animation` API that allows the user to specify an animation and duration.
+ * @param {string} animation - The type of animation to be executed on the marker - see a list Google Maps marker animations for more options.
+ * @param {integer} duration - (optional) Duration of the animation in miliseconds.
+ * @example
+ * myMarker.animate('drop');
+ * myMarker.animate('bounce', 3000);
+ */
+LocationMarker.prototype.animate = function (animation, duration = null) {
+  const self = this;
+  let ANIMATION;
 
-  // Add an event listener to our marker, listening for a 'click',
-  // open the markers' infoWindow when heard.
-  this.marker.addListener('click', function (){
-    self.infoWindow.open(this.map, this);
-  });
+  switch (animation.toUpperCase()) {
+    case 'BOUNCE':
+      ANIMATION = google.maps.Animation.BOUNCE;
+      break;
+    case 'DROP':
+      ANIMATION = google.maps.Animation.DROP;
+      break;
+    default:
+      ANIMATION = null;
+  }
+
+  self.marker.setAnimation(ANIMATION);
+
+  if (duration != null) {
+    setTimeout(function () { self.marker.setAnimation(null); }, duration);
+  }
 };
 </code></pre>
         </article>
@@ -133,7 +213,7 @@ const LocationMarker = function (map, data) {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Mon Mar 20 2017 22:03:00 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Wed Mar 29 2017 23:15:26 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>
