@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Udacity Neighbourhood Map</title>
+    <title>Neighbourhood Map</title>
     <link href="./assets/styles/map.css" rel="stylesheet" type="text/css">
     <link href="./assets/styles/foundation-flex.min.css" rel="stylesheet" type="text/css">
     <link href="./assets/styles/font-awesome.min.css" rel="stylesheet" type="text/css">
@@ -14,17 +14,33 @@
       <div class="off-canvas-wrapper-inner" data-off-canvas-wrapper>
         <div class="off-canvas position-left reveal-for-large" id="my-info" data-off-canvas data-position="left">
           <div class="row column">
-            <h3><small><i class="fa fa-md fa-bars"></i></small> Main Menu</h3>
-            <p>Duis aliquet egestas purus in blandit. Curabitur vulputate, ligula lacinia scelerisque tempor.</p>
+            <h3>Neighbourhood Map</h3>
+            <p>This is a map of my city and some of my favourite places to go! Whether it be for games, food, or both!</p>
+            <h5><small><i class="fa fa-md fa-pencil"></i></small> Instructions</h5>
+            <div id="instructions" class="large reveal" data-reveal>
+              <h5><small><i class="fa fa-md fa-pencil"></i></small> Instructions</h5>
+              <ol>
+                <li>Clicking on the markers within the list or on the map will open an information window containing all data found for a given location.</li>
+                <li>You can filter through all the markers by typing a search phrase into the filter bar.</li>
+              </ol>
+              <button type="button" class="close-button" data-close aria-label="Close modal">&times;</button>
+            </div>
+            <p><a data-open="instructions">Click to view instructions.</a></p>
             <hr>
             <h4><small><i class="fa fa-md fa-filter"></i></small> Filter</h4>
-            <input data-bind="textInput: filter, valueUpdate: 'afterkeyup'" />
+            <input type="search" data-bind="textInput: filter, valueUpdate: 'afterkeyup'" placeholder="Filter markers...">
             <hr>
             <h4><small><i class="fa fa-md fa-map-marker"></i></small> Locations</h4>
             <ul data-bind="foreach: enabledMarkers" class="vertical menu">
-              <li><a href="#" data-bind="text: details.name, click: invoke.bind($data, 'click')"></a></li>
+              <li><a class="location-list-item" href="#" data-bind="text: details.name, click: invoke.bind($data, 'click')"></a></li>
             </ul>
             <hr>
+          </div>
+          <div class="row column">
+            <small>
+              <p><a href="https://github.com/jordanbrauer/udacity-neighbourhood-map" target="_blank"><i class="fa fa-lg fa-github"></i> View on GitHub</a></p>
+              <p>Made with <i class="fa fa-md fa-heart"></i> by Jordan Brauer</p>
+            </small>
           </div>
         </div>
         <div class="off-canvas-content" data-off-canvas-content>
