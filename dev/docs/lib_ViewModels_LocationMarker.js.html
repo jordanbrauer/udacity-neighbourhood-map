@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: ViewModels/LocationMarker.js</title>
+    <title>JSDoc: Source: lib/ViewModels/LocationMarker.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: ViewModels/LocationMarker.js</h1>
+    <h1 class="page-title">Source: lib/ViewModels/LocationMarker.js</h1>
 
     
 
@@ -48,20 +48,66 @@ const LocationMarker = function (map, data) {
   /** @private */
   const init = function () {
     const request = $.get(`${self.api.base_uri}/${self.api.end_point}`).done(function (res) {
+      console.log(res.response);
+
       self.api.status = res.meta.code;
 
       const venue = res.response.venues[0];
+      const info = self.details;
 
-      self.details.url = venue.url;
-      self.details.street = venue.location.formattedAddress[0];
-      self.details.city = venue.location.formattedAddress[1];
-      self.details.phoneNumber = venue.contact.formattedPhone;
+      info.id = venue.id || null;
+      info.name = venue.name || info.name;
+      info.street = venue.location.formattedAddress[0] || 'Street N/A';
+      info.city = venue.location.formattedAddress[1] || 'City N/A';
+      info.country = venue.location.formattedAddress[2] || 'Country N/A';
+      info.phone = venue.contact.formattedPhone || '#';
+      info.url = venue.url || '#';
+      info.facebook = venue.contact.facebook || '#';
+      info.instagram = venue.contact.instagram || '#';
+      info.twitter = venue.contact.twitter || '#';
 
       self.content =`
-      &lt;h4>&lt;a href="${self.details.url}" target="_blank">${self.details.name}&lt;/a>&lt;/h4>
-      &lt;p>${self.details.street}, ${self.details.city}&lt;/p>
-      &lt;p>${self.details.lat}, ${self.details.lng}&lt;/p>
-      &lt;p>${self.details.phoneNumber}&lt;/p>
+      &lt;div class="row column">
+        &lt;h4>&lt;a id="${info.id}-url" href="${info.url}" target="_blank">${info.name}&lt;/a> &lt;small>&lt;sup>&lt;i class="fa fa-md fa-external-link">&lt;/i>&lt;/sup>&lt;/small>&lt;/h4>
+      &lt;/div>
+      &lt;hr>
+      &lt;div class="row column">
+        &lt;h6>Details&lt;/h6>
+      &lt;/div>
+      &lt;div class="row">
+        &lt;div class="columns small-12 medium-12">
+          &lt;p>${info.street},&lt;br>${info.city}, ${info.country}&lt;br>&lt;span data-tooltip aria-haspopup="true" class="has-tip top" data-disable-hover="false" tabindex="1" title="${info.lat}, ${info.lng}">Where is this?&lt;/span>&lt;/p>
+          &lt;p>&lt;/p>
+        &lt;/div>
+        &lt;div class="columns small-12 medium-6">
+        &lt;/div>
+      &lt;/div>
+      &lt;div class="row text-center">
+        &lt;div class="column small-4">
+          &lt;p>Checkins&lt;/p>
+          &lt;div class="stat">${venue.stats.checkinsCount}&lt;/div>
+        &lt;/div>
+        &lt;div class="column small-4">
+          &lt;p>Tips&lt;/p>
+          &lt;div class="stat">${venue.stats.tipCount}&lt;/div>
+          &lt;/div>
+        &lt;div class="column small-4">
+          &lt;p>Users&lt;/p>
+          &lt;div class="stat">${venue.stats.usersCount}&lt;/div>
+        &lt;/div>
+      &lt;/div>
+      &lt;br>
+      &lt;div class="row column">
+        &lt;h6>Contact&lt;/h6>
+      &lt;/div>
+      &lt;div class="row column">
+        &lt;ul class="horizontal menu">
+          &lt;li>&lt;a id="${info.id}-facebook" href="${info.facebook}" target="_blank">&lt;i class="fa fa-lg fa-facebook">&lt;/i>&lt;/a>&lt;/li>
+          &lt;li>&lt;a id="${info.id}-instagram" href="${info.instagram}" target="_blank">&lt;i class="fa fa-lg fa-instagram">&lt;/i>&lt;/a>&lt;/li>
+          &lt;li>&lt;a id="${info.id}-twitter" href="${info.twitter}" target="_blank">&lt;i class="fa fa-lg fa-twitter">&lt;/i>&lt;/a>&lt;/li>
+          &lt;li>&lt;a id="${info.id}-phone" href="tel:${info.phone}" target="_blank">&lt;i class="fa fa-lg fa-phone">&lt;/i> &amp;ndash; ${info.phone}&lt;/a>&lt;/li>
+        &lt;/ul>
+      &lt;/div>
       `;
     }).fail(function (err) {
       try {
@@ -74,9 +120,31 @@ const LocationMarker = function (map, data) {
       }
     });
 
-    self.marker.addListener('click', function (){
+    self.marker.addListener('click', function () {
+      // XXX:HACK:FIXME: Aplogies to me, myself, and anyone who reads this lol,
+      // Really gross chain of ifs inside this promise. Not sure how else to solve
+      // this right now.. and I would rather move on with the rest of the project for now.
       if (!self.infoWindow.content) {
-        self.infoWindow.setContent(self.content);
+        let setInfoWindowContent = new Promise(function (resolve, reject) {
+          self.infoWindow.setContent(self.content);
+          resolve();
+        }).then(function () {
+          if (!self.checkDetail(self.details.phone))
+            self.disableDetail(`#${self.details.id}-phone`);
+
+          if (!self.checkDetail(self.details.url))
+            self.disableDetail(`#${self.details.id}-url`);
+
+          if (!self.checkDetail(self.details.facebook))
+            self.disableDetail(`#${self.details.id}-facebook`);
+
+          if (!self.checkDetail(self.details.instagram))
+            self.disableDetail(`#${self.details.id}-instagram`);
+
+          if (!self.checkDetail(self.details.twitter))
+            self.disableDetail(`#${self.details.id}-twitter`);
+
+        });
       }
 
       self.animate('bounce', 2150);
@@ -120,6 +188,7 @@ const LocationMarker = function (map, data) {
    * @property {string} details.instagram - Instagram link to venue.
    */
   this.details = {
+    id: null,
     name: data.name,
     lat: data.lat,
     lng: data.lng,
@@ -141,7 +210,7 @@ const LocationMarker = function (map, data) {
    */
   this.api = {
     base_uri: 'https://api.foursquare.com/v2',
-    end_point: `venues/search?ll=${self.details.lat},${self.details.lng}&amp;client_id=${CLIENT_ID}&amp;client_secret=${CLIENT_SECRET}&amp;v=20170329`,
+    end_point: `venues/search?ll=${self.details.lat},${self.details.lng}&amp;query=${self.details.name}&amp;client_id=${CLIENT_ID}&amp;client_secret=${CLIENT_SECRET}&amp;v=20170329`,
     status: null,
     // request: null,
   };
@@ -178,6 +247,7 @@ const LocationMarker = function (map, data) {
  */
 LocationMarker.prototype.animate = function (animation, duration = null) {
   const self = this;
+  console.log(self);
   let ANIMATION;
 
   switch (animation.toUpperCase()) {
@@ -197,6 +267,27 @@ LocationMarker.prototype.animate = function (animation, duration = null) {
     setTimeout(function () { self.marker.setAnimation(null); }, duration);
   }
 };
+
+/**
+ * @memberof LocationMarker
+ * @method checkDetail
+ * @description Return true or false if a detail exists or not in the APIs data e.g., website, social media, address, etc.
+ * @param {string} detail - Value to be checked
+ * @returns boolean
+ */
+LocationMarker.prototype.checkDetail = function (detail) {
+  return detail === '#' ? false : true;
+};
+
+/**
+ * @memberof LocationMarker
+ * @method disableDetail
+ * @description Disables a link from being used
+ * @param {string} selector - The element to disable
+ */
+LocationMarker.prototype.disableDetail = function (selector) {
+  $(selector).css({ color: "#CCC", pointerEvents: "none" });
+};
 </code></pre>
         </article>
     </section>
@@ -213,7 +304,7 @@ LocationMarker.prototype.animate = function (animation, duration = null) {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Wed Mar 29 2017 23:15:26 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Apr 06 2017 11:15:35 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>
