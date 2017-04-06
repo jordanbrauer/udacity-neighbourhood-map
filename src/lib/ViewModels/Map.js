@@ -23,6 +23,7 @@ const Map = function (locations, options) {
   const init = function () {
     self.setLocationMarkers(self.locations);
     console.log(self);
+    console.log(self.enabledMarkers());
   };
 
   /**
@@ -30,6 +31,12 @@ const Map = function (locations, options) {
    * @property {array} locations - Store our location data in a new array property.
    */
   this.locations = ko.observableArray(locations) || ko.observableArray([]);
+
+  /**
+   * @memberof Map
+   * @property {string} filter - User defined filter for list of locations.
+   */
+  this.filter = ko.observable('');
 
   /**
    * @memberof Map
@@ -52,6 +59,31 @@ const Map = function (locations, options) {
    * @property {array} markers - Store our markers in an array property.
    */
   this.markers = ko.observableArray([]);
+
+  /**
+   * @memberof Map
+   * @property {object} enabledMarkers - An Knockout computed variable containing an array of filtered markers
+   * containing text specified by the user.
+   */
+  this.enabledMarkers = ko.computed(function () {
+    let filter = self.filter().toLowerCase();
+
+    switch (filter) {
+      case undefined:
+        return self.markers().forEach(function (marker) {
+          marker.enabled(true);
+        });
+        break;
+      default:
+        return ko.utils.arrayFilter(self.markers(), function (marker) {
+          const subject = marker.details.name.toLowerCase();
+          const result = subject.search(filter) >= 0;
+
+          marker.enabled(result);
+          return result;
+        });
+    }
+  });
 
   // Call the object constructor
   init();

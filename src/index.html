@@ -18,10 +18,10 @@
             <p>Duis aliquet egestas purus in blandit. Curabitur vulputate, ligula lacinia scelerisque tempor.</p>
             <hr>
             <h4><small><i class="fa fa-md fa-filter"></i></small> Filter</h4>
-            <input type="search" results="5" placeholder="Filter markers...">
+            <input data-bind="textInput: filter, valueUpdate: 'afterkeyup'" />
             <hr>
             <h4><small><i class="fa fa-md fa-map-marker"></i></small> Locations</h4>
-            <ul data-bind="foreach: markers" class="vertical menu">
+            <ul data-bind="foreach: enabledMarkers" class="vertical menu">
               <li><a href="#" data-bind="text: details.name, click: invoke.bind($data, 'click')"></a></li>
             </ul>
             <hr>

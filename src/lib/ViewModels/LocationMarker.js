@@ -20,27 +20,27 @@ const LocationMarker = function (map, data) {
   /** @private */
   const init = function () {
     const request = $.get(`${self.api.base_uri}/${self.api.end_point}`).done(function (res) {
-      console.log(res.response);
-
-      self.api.status = res.meta.code;
-
+      // Shortcut constants
       const venue = res.response.venues[0];
       const info = self.details;
 
-      info.id = venue.id || null;
+      // Assign values to our "headless" properties
+      self.api.status = res.meta.code;
+      self.id = venue.id || null;
       info.name = venue.name || info.name;
       info.street = venue.location.formattedAddress[0] || 'Street N/A';
       info.city = venue.location.formattedAddress[1] || 'City N/A';
       info.country = venue.location.formattedAddress[2] || 'Country N/A';
-      info.phone = venue.contact.formattedPhone || '#';
-      info.url = venue.url || '#';
-      info.facebook = venue.contact.facebook || '#';
-      info.instagram = venue.contact.instagram || '#';
-      info.twitter = venue.contact.twitter || '#';
+      info.phone = venue.contact.formattedPhone || undefined;
+      info.url = venue.url || undefined;
+      info.facebook = venue.contact.facebook || undefined;
+      info.instagram = venue.contact.instagram || undefined;
+      info.twitter = venue.contact.twitter || undefined;
 
+      // Build HTML content using data from our API request
       self.content =`
       <div class="row column">
-        <h4><a id="${info.id}-url" href="${info.url}" target="_blank">${info.name}</a> <small><sup><i class="fa fa-md fa-external-link"></i></sup></small></h4>
+        <h4><a id="${venue.id}-url" href="${info.url}" target="_blank">${info.name}</a> <small><sup><i class="fa fa-md fa-external-link"></i></sup></small></h4>
       </div>
       <hr>
       <div class="row column">
@@ -74,14 +74,15 @@ const LocationMarker = function (map, data) {
       </div>
       <div class="row column">
         <ul class="horizontal menu">
-          <li><a id="${info.id}-facebook" href="${info.facebook}" target="_blank"><i class="fa fa-lg fa-facebook"></i></a></li>
-          <li><a id="${info.id}-instagram" href="${info.instagram}" target="_blank"><i class="fa fa-lg fa-instagram"></i></a></li>
-          <li><a id="${info.id}-twitter" href="${info.twitter}" target="_blank"><i class="fa fa-lg fa-twitter"></i></a></li>
-          <li><a id="${info.id}-phone" href="tel:${info.phone}" target="_blank"><i class="fa fa-lg fa-phone"></i> &ndash; ${info.phone}</a></li>
+          <li><a id="${venue.id}-facebook" href="${info.facebook}" target="_blank"><i class="fa fa-lg fa-facebook"></i></a></li>
+          <li><a id="${venue.id}-instagram" href="${info.instagram}" target="_blank"><i class="fa fa-lg fa-instagram"></i></a></li>
+          <li><a id="${venue.id}-twitter" href="${info.twitter}" target="_blank"><i class="fa fa-lg fa-twitter"></i></a></li>
+          <li><a id="${venue.id}-phone" href="tel:${info.phone}" target="_blank"><i class="fa fa-lg fa-phone"></i> &ndash; ${info.phone}</a></li>
         </ul>
       </div>
       `;
     }).fail(function (err) {
+      // Try, catch, finally block for API GET request errors.
       try {
         self.api.status = err.status;
         console.error(`ERROR ${err.status} (${err.statusText}): ${err.responseJSON.meta.errorDetail}`);
@@ -102,19 +103,19 @@ const LocationMarker = function (map, data) {
           resolve();
         }).then(function () {
           if (!self.checkDetail(self.details.phone))
-            self.disableDetail(`#${self.details.id}-phone`);
+            self.disableDetail(`#${self.id}-phone`);
 
           if (!self.checkDetail(self.details.url))
-            self.disableDetail(`#${self.details.id}-url`);
+            self.disableDetail(`#${self.id}-url`);
 
           if (!self.checkDetail(self.details.facebook))
-            self.disableDetail(`#${self.details.id}-facebook`);
+            self.disableDetail(`#${self.id}-facebook`);
 
           if (!self.checkDetail(self.details.instagram))
-            self.disableDetail(`#${self.details.id}-instagram`);
+            self.disableDetail(`#${self.id}-instagram`);
 
           if (!self.checkDetail(self.details.twitter))
-            self.disableDetail(`#${self.details.id}-twitter`);
+            self.disableDetail(`#${self.id}-twitter`);
 
         });
       }
@@ -124,7 +125,7 @@ const LocationMarker = function (map, data) {
       self.infoWindow.open(this.map, this);
     });
 
-    console.log(self);
+
   };
 
   /** @private */
@@ -132,6 +133,18 @@ const LocationMarker = function (map, data) {
 
   /** @private */
   const CLIENT_SECRET = 'BKMWVMAPHQ5LLDGWDVWKEAJ35USFQPFLI0NKBJ4BBPECHOHZ';
+
+  /**
+   * @memberof LocationMarker
+   * @property {string} id - unique identifier for each marker. Retried from 3rd part API.
+   */
+  this.id;
+
+  /**
+   * @memberof LocationMarker
+   * @property {boolean} enabled - Is the marker enabled/visible (true) or disable/invisible (false)
+   */
+  this.enabled = ko.observable(true);
 
   /**
    * @memberof LocationMarker
@@ -160,7 +173,6 @@ const LocationMarker = function (map, data) {
    * @property {string} details.instagram - Instagram link to venue.
    */
   this.details = {
-    id: null,
     name: data.name,
     lat: data.lat,
     lng: data.lng,
@@ -184,7 +196,6 @@ const LocationMarker = function (map, data) {
     base_uri: 'https://api.foursquare.com/v2',
     end_point: `venues/search?ll=${self.details.lat},${self.details.lng}&query=${self.details.name}&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&v=20170329`,
     status: null,
-    // request: null,
   };
 
   /**
@@ -203,6 +214,15 @@ const LocationMarker = function (map, data) {
     title: self.details.name,
   });
 
+  /**
+   * @memberof LocationMarker
+   * @property {object} toggled - Set or unset the marker's map based on the status of this.enabled
+   */
+  this.toggled = ko.computed(function () {
+    return self.enabled() === true ?
+      self.marker.setMap(self.map) : self.marker.setMap(null);
+  });
+
   // Call object constructor
   init();
 };
@@ -219,7 +239,6 @@ const LocationMarker = function (map, data) {
  */
 LocationMarker.prototype.animate = function (animation, duration = null) {
   const self = this;
-  console.log(self);
   let ANIMATION;
 
   switch (animation.toUpperCase()) {
@@ -248,7 +267,7 @@ LocationMarker.prototype.animate = function (animation, duration = null) {
  * @returns boolean
  */
 LocationMarker.prototype.checkDetail = function (detail) {
-  return detail === '#' ? false : true;
+  return detail === undefined ? false : true;
 };
 
 /**
@@ -264,7 +283,8 @@ LocationMarker.prototype.disableDetail = function (selector) {
 /**
  * @memberof LocationMarker
  * @method invoke
- * @description
+ * @description Invoke an event on a marker from anywhere
+ * @param {string} e - Event type to listen for
  */
 LocationMarker.prototype.invoke = function (e) {
   const self = this;
