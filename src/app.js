@@ -18,3 +18,14 @@ function initMap() {
 
   return ko.applyBindings(googleMaps);
 }
+
+const mapFail = function () {
+  let el = document.getElementById('map').innerHTML = `
+  <div class="row column">
+    <div class="large alert callout">
+      <h3>Whoops!</h3>
+      <p>It seems something has gone terribly wrong... :(</p>
+    </div>
+  </div>
+  `;
+};

@@ -51,11 +51,7 @@
             </div>
           </div>
           <div class="row expanded">
-            <div id="map">
-              <!-- error message -->
-              <h3>Whoops!</h3>
-              <p>It seems something has gone terribly wrong...</p>
-            </div>
+            <div id="map"></div>
           </div>
         </div>
       </div>
@@ -69,6 +65,6 @@
     <script src="./lib/Models/Locations.js" type="text/javascript"></script>
     <script src="./lib/ViewModels/LocationMarker.js" type="text/javascript"></script>
     <script src="./lib/ViewModels/Map.js" type="text/javascript"></script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDBKB7E7t4u2DXzhPq-FQFT2YKV0ODuPHo&callback=initMap"></script>
+    <script async defer src="https://maps.googlsdeapis.com/maps/api/js?key=AIzaSyDBKB7E7t4u2DXzhPq-FQFT2YKV0ODuPHo&callback=initMap" onerror="mapFail()"></script>
   </body>
 </html>
