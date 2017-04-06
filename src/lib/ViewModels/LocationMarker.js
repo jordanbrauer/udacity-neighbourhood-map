@@ -260,3 +260,14 @@ LocationMarker.prototype.checkDetail = function (detail) {
 LocationMarker.prototype.disableDetail = function (selector) {
   $(selector).css({ color: "#CCC", pointerEvents: "none" });
 };
+
+/**
+ * @memberof LocationMarker
+ * @method invoke
+ * @description
+ */
+LocationMarker.prototype.invoke = function (e) {
+  const self = this;
+
+  google.maps.event.trigger(self.marker, e);
+};

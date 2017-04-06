@@ -14,15 +14,15 @@
       <div class="off-canvas-wrapper-inner" data-off-canvas-wrapper>
         <div class="off-canvas position-left reveal-for-large" id="my-info" data-off-canvas data-position="left">
           <div class="row column">
-            <h3>Menu</h3>
+            <h3><small><i class="fa fa-md fa-bars"></i></small> Main Menu</h3>
             <p>Duis aliquet egestas purus in blandit. Curabitur vulputate, ligula lacinia scelerisque tempor.</p>
             <hr>
-            <h4>Filter</h4>
+            <h4><small><i class="fa fa-md fa-filter"></i></small> Filter</h4>
             <input type="search" results="5" placeholder="Filter markers...">
             <hr>
-            <h4>Locations</h4>
-            <ul data-bind="foreach: locations" class="vertical menu">
-              <li><a href="#" data-bind="text: name"></a></li>
+            <h4><small><i class="fa fa-md fa-map-marker"></i></small> Locations</h4>
+            <ul data-bind="foreach: markers" class="vertical menu">
+              <li><a href="#" data-bind="text: details.name, click: invoke.bind($data, 'click')"></a></li>
             </ul>
             <hr>
           </div>
