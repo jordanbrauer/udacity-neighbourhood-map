@@ -14,11 +14,7 @@ Open the `index.html` file within `src/` to use the application.
 
 ## Documentation
 
-Documentation exists for this project within `dev/docs/`. You can generate a new set of documentation locally by running
-
-```shell
-$ npm run docs
-```
+Read the docs <a href="https://jordanbrauer.github.io/udacity-neighbourhood-map/dev/docs/" target="\_blank">here</a>
 
 ## Tests
 
