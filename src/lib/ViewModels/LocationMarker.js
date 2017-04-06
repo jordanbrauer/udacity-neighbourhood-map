@@ -20,20 +20,66 @@ const LocationMarker = function (map, data) {
   /** @private */
   const init = function () {
     const request = $.get(`${self.api.base_uri}/${self.api.end_point}`).done(function (res) {
+      console.log(res.response);
+
       self.api.status = res.meta.code;
 
       const venue = res.response.venues[0];
+      const info = self.details;
 
-      self.details.url = venue.url;
-      self.details.street = venue.location.formattedAddress[0];
-      self.details.city = venue.location.formattedAddress[1];
-      self.details.phoneNumber = venue.contact.formattedPhone;
+      info.id = venue.id || null;
+      info.name = venue.name || info.name;
+      info.street = venue.location.formattedAddress[0] || 'Street N/A';
+      info.city = venue.location.formattedAddress[1] || 'City N/A';
+      info.country = venue.location.formattedAddress[2] || 'Country N/A';
+      info.phone = venue.contact.formattedPhone || '#';
+      info.url = venue.url || '#';
+      info.facebook = venue.contact.facebook || '#';
+      info.instagram = venue.contact.instagram || '#';
+      info.twitter = venue.contact.twitter || '#';
 
       self.content =`
-      <h4><a href="${self.details.url}" target="_blank">${self.details.name}</a></h4>
-      <p>${self.details.street}, ${self.details.city}</p>
-      <p>${self.details.lat}, ${self.details.lng}</p>
-      <p>${self.details.phoneNumber}</p>
+      <div class="row column">
+        <h4><a id="${info.id}-url" href="${info.url}" target="_blank">${info.name}</a> <small><sup><i class="fa fa-md fa-external-link"></i></sup></small></h4>
+      </div>
+      <hr>
+      <div class="row column">
+        <h6>Details</h6>
+      </div>
+      <div class="row">
+        <div class="columns small-12 medium-12">
+          <p>${info.street},<br>${info.city}, ${info.country}<br><span data-tooltip aria-haspopup="true" class="has-tip top" data-disable-hover="false" tabindex="1" title="${info.lat}, ${info.lng}">Where is this?</span></p>
+          <p></p>
+        </div>
+        <div class="columns small-12 medium-6">
+        </div>
+      </div>
+      <div class="row text-center">
+        <div class="column small-4">
+          <p>Checkins</p>
+          <div class="stat">${venue.stats.checkinsCount}</div>
+        </div>
+        <div class="column small-4">
+          <p>Tips</p>
+          <div class="stat">${venue.stats.tipCount}</div>
+          </div>
+        <div class="column small-4">
+          <p>Users</p>
+          <div class="stat">${venue.stats.usersCount}</div>
+        </div>
+      </div>
+      <br>
+      <div class="row column">
+        <h6>Contact</h6>
+      </div>
+      <div class="row column">
+        <ul class="horizontal menu">
+          <li><a id="${info.id}-facebook" href="${info.facebook}" target="_blank"><i class="fa fa-lg fa-facebook"></i></a></li>
+          <li><a id="${info.id}-instagram" href="${info.instagram}" target="_blank"><i class="fa fa-lg fa-instagram"></i></a></li>
+          <li><a id="${info.id}-twitter" href="${info.twitter}" target="_blank"><i class="fa fa-lg fa-twitter"></i></a></li>
+          <li><a id="${info.id}-phone" href="tel:${info.phone}" target="_blank"><i class="fa fa-lg fa-phone"></i> &ndash; ${info.phone}</a></li>
+        </ul>
+      </div>
       `;
     }).fail(function (err) {
       try {
@@ -46,9 +92,31 @@ const LocationMarker = function (map, data) {
       }
     });
 
-    self.marker.addListener('click', function (){
+    self.marker.addListener('click', function () {
+      // XXX:HACK:FIXME: Aplogies to me, myself, and anyone who reads this lol,
+      // Really gross chain of ifs inside this promise. Not sure how else to solve
+      // this right now.. and I would rather move on with the rest of the project for now.
       if (!self.infoWindow.content) {
-        self.infoWindow.setContent(self.content);
+        let setInfoWindowContent = new Promise(function (resolve, reject) {
+          self.infoWindow.setContent(self.content);
+          resolve();
+        }).then(function () {
+          if (!self.checkDetail(self.details.phone))
+            self.disableDetail(`#${self.details.id}-phone`);
+
+          if (!self.checkDetail(self.details.url))
+            self.disableDetail(`#${self.details.id}-url`);
+
+          if (!self.checkDetail(self.details.facebook))
+            self.disableDetail(`#${self.details.id}-facebook`);
+
+          if (!self.checkDetail(self.details.instagram))
+            self.disableDetail(`#${self.details.id}-instagram`);
+
+          if (!self.checkDetail(self.details.twitter))
+            self.disableDetail(`#${self.details.id}-twitter`);
+
+        });
       }
 
       self.animate('bounce', 2150);
@@ -92,6 +160,7 @@ const LocationMarker = function (map, data) {
    * @property {string} details.instagram - Instagram link to venue.
    */
   this.details = {
+    id: null,
     name: data.name,
     lat: data.lat,
     lng: data.lng,
@@ -113,7 +182,7 @@ const LocationMarker = function (map, data) {
    */
   this.api = {
     base_uri: 'https://api.foursquare.com/v2',
-    end_point: `venues/search?ll=${self.details.lat},${self.details.lng}&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&v=20170329`,
+    end_point: `venues/search?ll=${self.details.lat},${self.details.lng}&query=${self.details.name}&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&v=20170329`,
     status: null,
     // request: null,
   };
@@ -150,6 +219,7 @@ const LocationMarker = function (map, data) {
  */
 LocationMarker.prototype.animate = function (animation, duration = null) {
   const self = this;
+  console.log(self);
   let ANIMATION;
 
   switch (animation.toUpperCase()) {
@@ -168,4 +238,25 @@ LocationMarker.prototype.animate = function (animation, duration = null) {
   if (duration != null) {
     setTimeout(function () { self.marker.setAnimation(null); }, duration);
   }
+};
+
+/**
+ * @memberof LocationMarker
+ * @method checkDetail
+ * @description Return true or false if a detail exists or not in the APIs data e.g., website, social media, address, etc.
+ * @param {string} detail - Value to be checked
+ * @returns boolean
+ */
+LocationMarker.prototype.checkDetail = function (detail) {
+  return detail === '#' ? false : true;
+};
+
+/**
+ * @memberof LocationMarker
+ * @method disableDetail
+ * @description Disables a link from being used
+ * @param {string} selector - The element to disable
+ */
+LocationMarker.prototype.disableDetail = function (selector) {
+  $(selector).css({ color: "#CCC", pointerEvents: "none" });
 };
