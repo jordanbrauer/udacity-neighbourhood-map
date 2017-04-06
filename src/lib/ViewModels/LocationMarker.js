@@ -18,7 +18,7 @@ const LocationMarker = function (map, data) {
   const self = this;
 
   /** @private */
-  const init = function () {
+  const __construct = function () {
     const request = $.get(`${self.api.base_uri}/${self.api.end_point}`).done(function (res) {
       // Shortcut constants
       const venue = res.response.venues[0];
@@ -224,7 +224,7 @@ const LocationMarker = function (map, data) {
   });
 
   // Call object constructor
-  init();
+  __construct();
 };
 
 /**
