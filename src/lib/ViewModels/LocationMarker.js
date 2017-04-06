@@ -94,6 +94,8 @@ const LocationMarker = function (map, data) {
     });
 
     self.marker.addListener('click', function () {
+      self.map.panTo(new google.maps.LatLng(self.details.lat, self.details.lng));
+
       // XXX:HACK:FIXME: Aplogies to me, myself, and anyone who reads this lol,
       // Really gross chain of ifs inside this promise. Not sure how else to solve
       // this right now.. and I would rather move on with the rest of the project for now.
