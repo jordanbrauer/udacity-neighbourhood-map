@@ -17,7 +17,7 @@ const Locations = [
     lng: -97.15094099999999,
   },
   {
-    name: 'Galaxy Games',
+    name: 'Amuse n Games',
     lat: 49.87904400000001,
     lng: -97.211935,
   },
