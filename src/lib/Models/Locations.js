@@ -30,5 +30,10 @@ const Locations = [
     name: 'Across the Board Game Café',
     lat: 49.898143,
     lng: -97.139662,
+  },
+  {
+    name: 'Galaxy Games',
+    lat: 49.938382,
+    lng: -97.092433,
   }
 ];
