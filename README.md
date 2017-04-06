@@ -10,7 +10,7 @@ $ cd udacity-neighbourhood-map
 $ npm install
 ```
 
-Open the `index.html` file to use the application.
+Open the `index.html` file within `src/` to use the application.
 
 ## Documentation
 
@@ -32,11 +32,10 @@ _Note: If you are on a Mac instead use the `test:macos` command instead._
 
 ## Credit & Attributions
 
-* Google Maps API (map)
+* Google Maps API (Map)
 * Knockout.js (MVVM framework)
-* Mocha.js (testing framework)
-* Chai.js (assertion library)
-* Gulp (build tool)
+* Mocha.js (Testing framework)
+* Chai.js (Assertion library)
 * Zurb Foundation (CSS framework)
-* Font Awesome (icon font)
-* jQuery (REST client)
+* Font Awesome (Icon webfont)
+* jQuery (DOM manipulation & REST client)
